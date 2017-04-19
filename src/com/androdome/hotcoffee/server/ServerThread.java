@@ -13,7 +13,7 @@ public boolean running = true;
 	{
 		while(running)
 		{
-			srvmain.Tick();
+			srvmain.tick();
 			try {
 				Thread.sleep(16L);
 			} catch (InterruptedException e) {

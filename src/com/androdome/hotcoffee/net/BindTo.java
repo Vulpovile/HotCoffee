@@ -2,25 +2,37 @@ package com.androdome.hotcoffee.net;
 
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.ServerSocketChannel;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.androdome.hotcoffee.server.Main;
 
-public final class BindTo {
+public final class BindTo implements Runnable{
 
-   public ServerSocketChannel serverChannel;
+   public ServerSocket serverSocket;
    public Main server;
+   public Socket socket;
    @SuppressWarnings("rawtypes")
 public List c = new LinkedList();
 
 
    public BindTo(int var1, Main var2) throws IOException {
-      this.server = var2;
-      this.serverChannel = ServerSocketChannel.open();
-      this.serverChannel.socket().bind(new InetSocketAddress(var1));
-      this.serverChannel.configureBlocking(false);
+      this.serverSocket = new ServerSocket(var1, 10);
+      server = var2;
+      
+   }
+   public void run()
+   {
+	   while(server.running = true)
+	      {
+	   	   try {
+	   		   socket = this.serverSocket.accept();
+	   		   System.out.print("Bind");
+		   	} catch (IOException e) {
+		   		e.printStackTrace();
+		   	}
+	      }
    }
 }

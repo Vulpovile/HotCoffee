@@ -32,48 +32,16 @@ public List c = new LinkedList();
    {
 	   while(server.running = true)
 	      {
-	   	   try {
-	   		   socket = this.serverSocket.accept();
-	   		   //System.out.print("Socket connected");
-	   		   PacketParser pPacket = new PacketParser();
-	   		   DataInputStream data = new DataInputStream(socket.getInputStream());
-	   		   DataOutputStream send = new DataOutputStream(socket.getOutputStream());
 
-//	   		   PacketType.
-	   		   String[] info = pPacket.recieve(PacketType.INDENTIFICATION, data);
-	   		   pPacket.send(PacketType.INDENTIFICATION, new Object[]{7, "Test", "tast", 0},  send);
-	   		   
-	   		   String mppass = info[2].trim();
-	   		   String name = info[1].trim();
-	   		   int packetversion = Integer.parseInt(info[0]);
-	   		   
+	   		   try {
+				socket = this.serverSocket.accept();
+				PlayerHandler pl = new PlayerHandler(socket);
+				pl.Player();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-	   		   
-	   		   System.out.println(name);
-	   		   System.out.println(mppass);
-	   		   
-	   		if(mppass.trim().equalsIgnoreCase(HeartSaltSend.generate(Main.salt.trim() + name.trim()))) {
-	   		 System.out.println("WHY WONT THIS WORK");
-	   		} else {
-	   		 System.out.println("YES");
-	   		}
-	   		   if(packetversion != 7)
-	   		   {
-	   			pPacket.send(PacketType.DISCONNECT, new Object[]{"Wrong packet version"}, send);  
-	   			data.close();
-	   			send.close();
-	   			socket.close();
-	   		   }
-	   		   else
-	   		   {
-	   			pPacket.send(PacketType.DISCONNECT, new Object[]{"This is a packet test"}, send);
-	   			data.close();
-	   			send.close();
-	   			socket.close();
-	   		   }
-		   	} catch (IOException e) {
-		   		e.printStackTrace();
-		   	}
 	      }
    }
 }

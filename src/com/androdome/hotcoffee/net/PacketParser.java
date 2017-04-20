@@ -3,14 +3,14 @@ package com.androdome.hotcoffee.net;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 public class PacketParser {
 
-	public String[] recieve(PacketType pack, Socket sock) {
+	public String[] recieve(PacketType pack, DataInputStream data) {
 		try {
-			DataInputStream data = new DataInputStream(sock.getInputStream());
 			String[] packets = new String[pack.length];
+			if(data.readByte() == pack.type)
+			{
 			for(int i = 0; i < pack.length; i++)
 			{
 				if(pack.size[i] == 1)
@@ -27,16 +27,20 @@ public class PacketParser {
 				}
 				if(pack.size[i] == 64)
 				{
-					String inpack = "";
-					for(int b = 0; b < 64; b++)
-					{
-						inpack = inpack + data.readChar();
-					}
-					packets[i] = inpack;
+					byte[] string = new byte[64];
+			   		   for(int b = 0; b < string.length; b++)
+			   		   {
+			   			   string[b] = (byte) data.readUnsignedByte();
+			   		   }
+			   		packets[i] = new String(string);
 				}
 				
 			}
-			data.close();
+			}
+			else
+			{
+				packets = null;
+			}
 			return packets;
 		} catch (IOException e) {
 		}
@@ -48,10 +52,9 @@ public class PacketParser {
 	
 	
 	
-	public boolean send(PacketType pack, Object[] attributes, Socket sock)
+	public boolean send(PacketType pack, Object[] attributes, DataOutputStream send)
 	{
 		try {
-			DataOutputStream send = new DataOutputStream(sock.getOutputStream());
 			if(pack.length == attributes.length)
 			{
 				send.writeByte(pack.type);
@@ -71,7 +74,14 @@ public class PacketParser {
 					}
 					else if(pack.size[i] == 64)
 					{
-						send.writeBytes(String.valueOf(attributes[i]));
+						for(int b = 0; b < 64; b++)
+						{
+							byte[] sr = String.valueOf(attributes[i]).getBytes();
+							if(b >= sr.length)
+							send.writeByte(0);
+							else
+								send.writeByte(sr[b]);
+						}
 					}
 					else if(pack.size[i] == 1024)
 					{
@@ -82,12 +92,10 @@ public class PacketParser {
 						
 					}
 				}
-				send.close();
 				return true;
 			}
 			else
 			{
-				send.close();
 				return false;
 			}
 			

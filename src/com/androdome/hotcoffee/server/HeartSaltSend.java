@@ -35,7 +35,7 @@ public class HeartSaltSend {
 	}
 	
 	
-	public final String generate(String var1) {
+	public final static String generate(String var1) {
 	      try {
 	         String var3 = var1;
 	         MessageDigest var4;

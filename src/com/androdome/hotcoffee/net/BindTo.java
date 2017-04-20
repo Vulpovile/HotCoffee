@@ -33,27 +33,38 @@ public List c = new LinkedList();
 	   while(server.running = true)
 	      {
 	   	   try {
-	   		   PacketParser pParse= new PacketParser();
 	   		   socket = this.serverSocket.accept();
-	   		   socket.setSendBufferSize(1024);
-	   		   socket.setReceiveBufferSize(1024);
 	   		   //System.out.print("Socket connected");
+	   		   PacketParser pPacket = new PacketParser();
+	   		   DataInputStream data = new DataInputStream(socket.getInputStream());
+	   		   DataOutputStream send = new DataOutputStream(socket.getOutputStream());
+
+//	   		   PacketType.
+	   		   String[] info = pPacket.recieve(PacketType.INDENTIFICATION, data);
+	   		   pPacket.send(PacketType.INDENTIFICATION, new Object[]{7, "Test", "tast", 0},  send);
 	   		   
-	   		   String[] id = pParse.recieve(PacketType.INDENTIFICATION, socket);
+	   		   String mppass = info[2].trim();
+	   		   String name = info[1].trim();
+	   		   int packetversion = Integer.parseInt(info[0]);
 	   		   
+
 	   		   
-	   		   String mppass = id[1];
-	   		   String name = id[2];
-	   		   System.out.print(mppass);
+	   		   System.out.println(name);
+	   		   System.out.println(mppass);
 	   		   
-	   		   pParse.send(PacketType.INDENTIFICATION, new Object[]{5, "Welcome", "Yes", 0}, socket);
-	   		   
-	   		if(mppass.equalsIgnoreCase(HeartSaltSend.generate(name.trim() + Main.salt.trim()))) {
-	   		 System.out.println("GODDAMNIT WHY WONT THIS WORK");
+	   		if(mppass.trim().equalsIgnoreCase(HeartSaltSend.generate(Main.salt.trim()+name.trim()))) {
+	   		 System.out.println("SEX");
 	   		} else {
-	   		 System.out.println("FALSE");
+	   		 System.out.println("YA");
 	   		}
-	   		
+	   		   if(packetversion != 7)
+	   		   {
+	   			pPacket.send(PacketType.DISCONNECT, new Object[]{"Wrong packet version"}, send);  
+	   		   }
+	   		   else
+	   		   {
+	   			pPacket.send(PacketType.DISCONNECT, new Object[]{"This is a packet test"}, send);
+	   		   }
 		   	} catch (IOException e) {
 		   		e.printStackTrace();
 		   	}

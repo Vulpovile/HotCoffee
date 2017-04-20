@@ -3,8 +3,8 @@
     public enum PacketType {
      
        INDENTIFICATION (0, new int[]{1, 64, 64, 1}),
-       PING (1, null),
-       LEVEL_INIT (2, null),
+       PING (1, new int[]{0}),
+       LEVEL_INIT (2, new int[]{0}),
        LEVEL_CHUNK(3, new int[]{2, 1024, 1}),
        LEVEL_FINAL(4, new int[]{2, 2, 2}),
        GET_BLOCK(5, new int[]{2,2,2,1,1}),
@@ -19,12 +19,14 @@
        DISCONNECT(14, new int[]{64}),
        UPDATE_PLAYER(15, new int[]{1});
      
-       private int type;
-       private int length;
+       public int type;
+       public int length;
+       public int[] size;
      
-       private PacketType(int type, int[] size) {
+       private PacketType(int type, int[] types) {
           this.type = type;
-          this.length = size.length;
+          this.length = types.length;
+          this.size = types;
        }
      
     }

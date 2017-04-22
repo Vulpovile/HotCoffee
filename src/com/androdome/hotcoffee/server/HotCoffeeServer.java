@@ -36,10 +36,15 @@ public class HotCoffeeServer {
 	
 	public void tickAllPlayers()
 	{
+		int connected = 0;
 		for(int i = 0; i < playerHandler.length; i++)
 		{
-			if(playerHandler[i] != null)try {playerHandler[i].tick();} catch (IOException e) {}
+			if(playerHandler[i] != null)
+				{try {playerHandler[i].tick();} catch (IOException e) {}
+				connected++;
+				}
 		}
+		HotCoffeeServer.users = connected;
 	}
 	
 	public void instantiate() {

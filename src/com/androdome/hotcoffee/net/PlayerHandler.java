@@ -18,6 +18,7 @@ public class PlayerHandler
 	DataOutputStream out;
 	PacketParser parsePacket;
 	boolean tickEnabled = false;
+	public boolean CPE = false;
 
 	public PlayerHandler(Socket sock, HotCoffeeServer m) 
 	{
@@ -33,11 +34,15 @@ public class PlayerHandler
 		in = new DataInputStream(socket.getInputStream());
 		out = new DataOutputStream(socket.getOutputStream());
 
-		// PacketType.
-		String[] info = parsePacket.recieve(PacketType.INDENTIFICATION, in, in.readByte());
-		parsePacket.send(PacketType.INDENTIFICATION, new Object[] { 7, "Test",
-				"tast", 0 }, out);
-
+		//Get identification
+		String[] info = this.recievePacket();
+		
+		//Send identification
+		parsePacket.send(PacketType.INDENTIFICATION, new Object[] { 7, "Test", "tast", 0}, out);
+		
+		if(Integer.parseInt(info[3]) == 66)
+			CPE = true;
+		
 		String mppass = info[2].replace(" ", "");
 		String name = info[1].replace(" ", "");
 		int packetversion = Integer.parseInt(info[0]);
@@ -114,26 +119,47 @@ public class PlayerHandler
 		HotCoffeeServer.playerHandler[playerid] = null;
 	}
 	
+	
+	public String[] recievePacket() throws IOException
+	{
+		int opcode = 0;
+		boolean opcodeValid = true;
+		try{opcode = in.readByte();}catch(Exception ex){opcodeValid = false;}
+		
+		if(opcodeValid);
+		{
+			PacketType packet = PacketType.getPacketType(opcode);
+			if(packet != null){
+				String[] input = parsePacket.recieve(packet, in, opcode);
+				if(input == null){
+					this.socket.close();
+					HotCoffeeServer.playerHandler[playerid] = null;
+					main.gui.write(username + " has disconnected.");
+					return null;}
+				else{
+				for(int i = 0; i < input.length; i++)
+				{
+				}
+				return input;
+				}
+			}
+			else
+			{
+				return null;
+			}
+			
+		}
+	}
+	
+	
 	public void tick() throws IOException
 	{
 		if(tickEnabled)
 		{
-			if(in.available() > 0);
+			String[] res = recievePacket();
+			if(res != null)
 			{
-				main.gui.write("Incoming packet");
-				int opcode = in.readByte();
-				PacketType packet = PacketType.getPacketType(opcode);
-				if(packet != null){
-				String[] input = parsePacket.recieve(packet, in, opcode);
-				for(int i = 0; i < input.length; i++)
-				{
-					main.gui.write(input[i]);
-				}
-				}
-				else
-				{
-					main.gui.write("Packet failed");
-				}
+				
 			}
 		}
 	}

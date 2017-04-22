@@ -74,11 +74,29 @@ public class PlayerHandler
 		else 
 		{
 			this.username = name;
-			this.playerid = socket.getTrafficClass();
-			System.out.print("Player successfully connected: " + name + ":" + playerid);
-			Main.playerHandler[playerid] = this;
+			for(int i = 0; i < Main.playerHandler.length; i++)
+			{
+				if(Main.playerHandler[i] == null){
+					Main.playerHandler[i] = this;
+					this.playerid = i;
+					break;
+				}
+			}
+			main.gui.write("Player successfully connected: " + username + ":" + playerid);
+			connect();
+			
 		}
 	}
+	
+	public void connect() throws IOException
+	{
+		main.gui.write("beginning connection...");
+		pPacket.send(PacketType.INDENTIFICATION, new Object[]{7, "Hi", "Server", 0}, out);
+		pPacket.send(PacketType.LEVEL_INIT, new Object[]{}, out);
+		disconnect("Failed");
+	}
+	
+	
 	public void disconnect(String reason) throws IOException
 	{
 		if(reason == null)
@@ -87,6 +105,7 @@ public class PlayerHandler
 			reason = "Kicked: " + reason;
 		if(out != null)
 		{
+			main.gui.write(username + " was disconnected: " + reason);
 			pPacket.send(PacketType.DISCONNECT, new Object[] {reason}, out);
 			socket.close();
 		}	

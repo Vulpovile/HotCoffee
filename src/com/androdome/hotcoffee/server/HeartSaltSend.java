@@ -20,29 +20,28 @@ public class HeartSaltSend {
 	public static String Beat(String salt, int port, boolean public_, int users, int max, String name)
 	{		
 		HeartSaltSend hl = new HeartSaltSend();
-		HashMap<String, Comparable> var9;
-        (var9 = new HashMap<String, Comparable>()).put("name", name);
-        var9.put("users", Integer.valueOf(users));
-        var9.put("max", Integer.valueOf(max));
-        var9.put("public", Boolean.valueOf(public_));
-        var9.put("port", Integer.valueOf(port));
-        var9.put("salt", salt);
-        var9.put("software", "HotCoffee");
-        var9.put("admin-slot", Boolean.valueOf(false));
-        var9.put("version", Byte.valueOf((byte)7));
-        String var13 = stringer((Map<String, Comparable>)var9);
+		HashMap<String, Comparable> heartbeatHashMap;
+        (heartbeatHashMap = new HashMap<String, Comparable>()).put("name", name);
+        heartbeatHashMap.put("users", Integer.valueOf(users));
+        heartbeatHashMap.put("max", Integer.valueOf(max));
+        heartbeatHashMap.put("public", Boolean.valueOf(public_));
+        heartbeatHashMap.put("port", Integer.valueOf(port));
+        heartbeatHashMap.put("salt", salt);
+        heartbeatHashMap.put("software", "HotCoffee");
+        heartbeatHashMap.put("admin-slot", Boolean.valueOf(false));
+        heartbeatHashMap.put("version", Byte.valueOf((byte)7));
+        String var13 = stringer((Map<String, Comparable>)heartbeatHashMap);
         return hl.doHeartBeat(var13, name);
 	}
 	
 	
-	public final static String generate(String var1) {
+	public final static String generate(String salt) {
 	      try {
-	         String var3 = var1;
 	         MessageDigest var4;
-	         (var4 = MessageDigest.getInstance("MD5")).update(var3.getBytes(), 0, var3.length());
+	         (var4 = MessageDigest.getInstance("MD5")).update(salt.getBytes(), 0, salt.length());
 	         return (new BigInteger(1, var4.digest())).toString(16);
-	      } catch (NoSuchAlgorithmException var2) {
-	         throw new RuntimeException(var2);
+	      } catch (NoSuchAlgorithmException ex) {
+	    	  return null;
 	      }
 	   }
 	
@@ -69,27 +68,27 @@ public class HeartSaltSend {
 
 	public String doHeartBeat(String a, String name)
 	{
-		HttpURLConnection var1 = null;
+		HttpURLConnection heartBeat = null;
 
 	      try {
-	         var1 = (HttpURLConnection)(new URL("http://www.classicube.net/heartbeat.jsp")).openConnection();
-	         var1.setRequestMethod("POST");
-	         var1.setDoOutput(true);
-	         var1.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-	         var1.setRequestProperty("Content-Length", Integer.toString(name.getBytes().length));
-	         var1.setRequestProperty("Content-Language", "en-US");
-	         var1.setUseCaches(false);
-	         var1.setDoInput(true);
-	         var1.setDoOutput(true);
-	         var1.connect();
-	         DataOutputStream var7;
-	         (var7 = new DataOutputStream(var1.getOutputStream())).writeBytes(a);
-	         var7.flush();
-	         var7.close();
-	         BufferedReader var9;
-	         String var3 = (var9 = new BufferedReader(new InputStreamReader(var1.getInputStream()))).readLine();
-	         var9.close();
-	         return var3;
+	         heartBeat = (HttpURLConnection)(new URL("http://www.classicube.net/heartbeat.jsp")).openConnection();
+	         heartBeat.setRequestMethod("POST");
+	         heartBeat.setDoOutput(true);
+	         heartBeat.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	         heartBeat.setRequestProperty("Content-Length", Integer.toString(name.getBytes().length));
+	         heartBeat.setRequestProperty("Content-Language", "en-US");
+	         heartBeat.setUseCaches(false);
+	         heartBeat.setDoInput(true);
+	         heartBeat.setDoOutput(true);
+	         heartBeat.connect();
+	         DataOutputStream datapage;
+	         (datapage = new DataOutputStream(heartBeat.getOutputStream())).writeBytes(a);
+	         datapage.flush();
+	         datapage.close();
+	         BufferedReader read;
+	         String link = (read = new BufferedReader(new InputStreamReader(heartBeat.getInputStream()))).readLine();
+	         read.close();
+	         return link;
 
 	      }
 	      catch(Exception ex)

@@ -1,6 +1,6 @@
 package com.androdome.hotcoffee.server;
 
-public class ServerThread implements Runnable {
+public class ServerThread{
 public Main srvmain;
 public boolean running = true;
 	

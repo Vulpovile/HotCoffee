@@ -1,6 +1,7 @@
 package com.androdome.hotcoffee.server;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.util.Random;
 import java.util.UUID;
 
@@ -28,10 +29,14 @@ public class HotCoffeeServer {
 		HotCoffeeServer m = new HotCoffeeServer();
 		m.gui.setLocationRelativeTo(null);
 		m.gui.setVisible(true);
-		url = HeartSaltSend.Beat(HotCoffeeServer.salt, HotCoffeeServer.port, HotCoffeeServer.public_, HotCoffeeServer.users, HotCoffeeServer.max, HotCoffeeServer.name);
-		m.gui.write("Success! Your heartbeat URL is:");
-		m.gui.write(url);
+		try{
 		m.instantiate();
+		}
+		catch(Exception ex)
+		{
+			m.gui.write("###FATAL ERROR IN MAIN LOOP! Server shut down!###");
+			m.running = false;
+		}
 	}
 	
 	public void tickAllPlayers()
@@ -52,10 +57,19 @@ public class HotCoffeeServer {
 		try 
 		{
 			this.bindTo = new BindTo(HotCoffeeServer.port, this);
-		} 
+			url = HeartSaltSend.Beat(HotCoffeeServer.salt, HotCoffeeServer.port, HotCoffeeServer.public_, HotCoffeeServer.users, HotCoffeeServer.max, HotCoffeeServer.name);
+			gui.write("Success! Your heartbeat URL is:");
+			gui.write(url);
+		}
+		catch(BindException ex)
+		{
+			this.gui.write("###Failed to bind to port, " + port + " is already in use!###");
+			this.running = false;
+		}
 		catch(IOException e) 
 		{
 			e.printStackTrace();
+			this.running = false;
 		}
 		new Thread(this.bindTo).start();
 		new ServerThread(this).run();

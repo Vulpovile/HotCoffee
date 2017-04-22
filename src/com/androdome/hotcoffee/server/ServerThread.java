@@ -2,7 +2,6 @@ package com.androdome.hotcoffee.server;
 
 public class ServerThread{
 public HotCoffeeServer srvmain;
-public boolean running = true;
 	
 	ServerThread(HotCoffeeServer smain)
 	{
@@ -11,7 +10,7 @@ public boolean running = true;
 	
 	public void run()
 	{
-		while(running)
+		while(srvmain.running)
 		{
 			srvmain.tick();
 			try {

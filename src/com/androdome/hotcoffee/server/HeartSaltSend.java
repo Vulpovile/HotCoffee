@@ -30,8 +30,8 @@ public class HeartSaltSend {
         heartbeatHashMap.put("software", "HotCoffee");
         heartbeatHashMap.put("admin-slot", Boolean.valueOf(false));
         heartbeatHashMap.put("version", Byte.valueOf((byte)7));
-        String var13 = stringer((Map<String, Comparable>)heartbeatHashMap);
-        return hl.doHeartBeat(var13, name);
+        String heartHash = stringer((Map<String, Comparable>)heartbeatHashMap);
+        return hl.doHeartBeat(heartHash, name);
 	}
 	
 	
@@ -47,26 +47,25 @@ public class HeartSaltSend {
 	
 	
 	
-	private static String stringer(Map var0) {
+	private static String stringer(Map map) {
 		      try {
-		         String var1 = "";
+		         String hash = "";
 
-		         String var3;
-		         for(Iterator<String> var2 = var0.keySet().iterator(); var2.hasNext(); var1 = var1 + var3 + "=" + URLEncoder.encode(var0.get(var3).toString(), "UTF-8")) {
-		            var3 = var2.next();
-		            if(var1 != "") {
-		               var1 = var1 + "&";
+		         String hashBasic;
+		         for(Iterator<String> reader = map.keySet().iterator(); reader.hasNext(); hash = hash + hashBasic + "=" + URLEncoder.encode(map.get(hashBasic).toString(), "UTF-8")) {
+		            hashBasic = reader.next();
+		            if(hash != "") {
+		               hash = hash + "&";
 		            }
 		         }
 
-		         return var1;
-		      } catch (Exception var4) {
-		         var4.printStackTrace();
-		         throw new RuntimeException("Failed to assemble heartbeat! This is pretty fatal");
+		         return hash;
+		      } catch (Exception ex) {
+		         return "Failed to assemble heartbeat! This is pretty fatal";
 		      }
 		   }
 
-	public String doHeartBeat(String a, String name)
+	public String doHeartBeat(String hash, String name)
 	{
 		HttpURLConnection heartBeat = null;
 
@@ -82,7 +81,7 @@ public class HeartSaltSend {
 	         heartBeat.setDoOutput(true);
 	         heartBeat.connect();
 	         DataOutputStream datapage;
-	         (datapage = new DataOutputStream(heartBeat.getOutputStream())).writeBytes(a);
+	         (datapage = new DataOutputStream(heartBeat.getOutputStream())).writeBytes(hash);
 	         datapage.flush();
 	         datapage.close();
 	         BufferedReader read;
@@ -94,7 +93,8 @@ public class HeartSaltSend {
 	      catch(Exception ex)
 	      {
 	    	  System.out.println("Something went wrong");
+	    	  return "Failed to generate heartbeat!";
 	      }
-		return "Failed to generate heartbeat";
+		
 	}
 }

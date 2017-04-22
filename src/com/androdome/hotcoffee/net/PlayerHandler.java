@@ -6,19 +6,20 @@ import java.io.IOException;
 import java.net.Socket;
 
 import com.androdome.hotcoffee.server.HeartSaltSend;
-import com.androdome.hotcoffee.server.Main;
+import com.androdome.hotcoffee.server.HotCoffeeServer;
 
 public class PlayerHandler 
 {
 	Socket socket;
-	String username;
-	Main main;
+	public String username;
+	HotCoffeeServer main;
 	int playerid;
 	DataInputStream in;
 	DataOutputStream out;
-	PacketParser pPacket;
+	PacketParser parsePacket;
+	boolean tickEnabled = false;
 
-	public PlayerHandler(Socket sock, Main m) 
+	public PlayerHandler(Socket sock, HotCoffeeServer m) 
 	{
 		socket = sock;
 		main = m;
@@ -28,20 +29,20 @@ public class PlayerHandler
 	{
 		boolean failed = false;
 		main.gui.write("Socket connected from " + socket.getInetAddress());
-		pPacket = new PacketParser();
+		parsePacket = new PacketParser();
 		in = new DataInputStream(socket.getInputStream());
 		out = new DataOutputStream(socket.getOutputStream());
 
 		// PacketType.
-		String[] info = pPacket.recieve(PacketType.INDENTIFICATION, in);
-		pPacket.send(PacketType.INDENTIFICATION, new Object[] { 7, "Test",
+		String[] info = parsePacket.recieve(PacketType.INDENTIFICATION, in, in.readByte());
+		parsePacket.send(PacketType.INDENTIFICATION, new Object[] { 7, "Test",
 				"tast", 0 }, out);
 
 		String mppass = info[2].replace(" ", "");
 		String name = info[1].replace(" ", "");
 		int packetversion = Integer.parseInt(info[0]);
 		
-		String verify = HeartSaltSend.generate(Main.salt + name);
+		String verify = HeartSaltSend.generate(HotCoffeeServer.salt + name);
 
 		if (mppass.equalsIgnoreCase(verify)) 
 		{
@@ -50,12 +51,12 @@ public class PlayerHandler
 		
 		else 
 		{
-			if (Main.verify)
+			if (HotCoffeeServer.verify)
 				failed = true;
 			main.gui.write("Not verified");
 		}
 		
-		if (packetversion != 7 || failed || Main.users >= Main.max) 
+		if (packetversion != 7 || failed || HotCoffeeServer.users >= HotCoffeeServer.max) 
 		{
 			String error = "";
 			
@@ -63,10 +64,10 @@ public class PlayerHandler
 				error = "Wrong packet version";
 			else if (failed)
 				error = "You could not be verified by classicube.net!";
-			else if (Main.users >= Main.max)
+			else if (HotCoffeeServer.users >= HotCoffeeServer.max)
 				error = "This server is full";
 			
-			pPacket.send(PacketType.DISCONNECT, new Object[] { error }, out);
+			parsePacket.send(PacketType.DISCONNECT, new Object[] { error }, out);
 			main.gui.write(name + " disconnected: " + error);
 			socket.close();
 		} 
@@ -74,10 +75,10 @@ public class PlayerHandler
 		else 
 		{
 			this.username = name;
-			for(int i = 0; i < Main.playerHandler.length; i++)
+			for(int i = 0; i < HotCoffeeServer.playerHandler.length; i++)
 			{
-				if(Main.playerHandler[i] == null){
-					Main.playerHandler[i] = this;
+				if(HotCoffeeServer.playerHandler[i] == null){
+					HotCoffeeServer.playerHandler[i] = this;
 					this.playerid = i;
 					break;
 				}
@@ -91,9 +92,10 @@ public class PlayerHandler
 	public void connect() throws IOException
 	{
 		main.gui.write("beginning connection...");
-		pPacket.send(PacketType.INDENTIFICATION, new Object[]{7, "Hi", "Server", 0}, out);
-		pPacket.send(PacketType.LEVEL_INIT, new Object[]{}, out);
-		disconnect("Failed");
+		parsePacket.send(PacketType.INDENTIFICATION, new Object[]{7, "Hi", "Server", 0}, out);
+		parsePacket.send(PacketType.LEVEL_INIT, new Object[]{}, out);
+		//disconnect("Connection not yet created");
+		this.tickEnabled = true;
 	}
 	
 	
@@ -106,9 +108,34 @@ public class PlayerHandler
 		if(out != null)
 		{
 			main.gui.write(username + " was disconnected: " + reason);
-			pPacket.send(PacketType.DISCONNECT, new Object[] {reason}, out);
+			parsePacket.send(PacketType.DISCONNECT, new Object[] {reason}, out);
 			socket.close();
 		}	
-		Main.playerHandler[playerid] = null;
+		HotCoffeeServer.playerHandler[playerid] = null;
 	}
+	
+	public void tick() throws IOException
+	{
+		if(tickEnabled)
+		{
+			if(in.available() > 0);
+			{
+				main.gui.write("Incoming packet");
+				int opcode = in.readByte();
+				PacketType packet = PacketType.getPacketType(opcode);
+				if(packet != null){
+				String[] input = parsePacket.recieve(packet, in, opcode);
+				for(int i = 0; i < input.length; i++)
+				{
+					main.gui.write(input[i]);
+				}
+				}
+				else
+				{
+					main.gui.write("Packet failed");
+				}
+			}
+		}
+	}
+	
 }

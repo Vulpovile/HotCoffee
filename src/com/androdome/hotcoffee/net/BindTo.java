@@ -6,19 +6,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
-import com.androdome.hotcoffee.server.Main;
+import com.androdome.hotcoffee.server.HotCoffeeServer;
 
 public final class BindTo implements Runnable{
 
    public ServerSocket serverSocket;
-   public Main server;
+   public HotCoffeeServer server;
    public Socket socket;
    @SuppressWarnings("rawtypes")
 public List c = new LinkedList();
 
 
-   public BindTo(int var1, Main var2) throws IOException {
-      this.serverSocket = new ServerSocket(var1, Main.max);
+   public BindTo(int var1, HotCoffeeServer var2) throws IOException {
+      this.serverSocket = new ServerSocket(var1, HotCoffeeServer.max);
       server = var2;
       
    }

@@ -1,7 +1,7 @@
 package com.androdome.hotcoffee.server;
 
 public class MemUsage {
-	public static void getmem(Main main){
+	public static void getmem(HotCoffeeServer main){
 	Runtime runtime = Runtime.getRuntime();
 	float mb = 1024.00f * 1024.00f;
 	

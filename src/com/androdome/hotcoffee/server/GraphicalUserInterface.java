@@ -12,14 +12,17 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import java.awt.Color;
-
 import javax.swing.JTextArea;
 
 import java.awt.Font;
+
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
-public class GraphicalUserInterface extends JFrame implements ListSelectionListener {
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+public class GraphicalUserInterface extends JFrame implements ListSelectionListener, KeyListener {
 
 	private static final long serialVersionUID = 0;
 	private JPanel contentPane;
@@ -28,8 +31,10 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 	public JTextArea serverField = new JTextArea();
 	boolean urgent = false;
 	JList list = new JList();
+	HotCoffeeServer main;
 	
-	public GraphicalUserInterface() {	
+	public GraphicalUserInterface(HotCoffeeServer mainSr) {	
+		main = mainSr;
 		setResizable(false);
 	    try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());} 
 		catch (Exception e) {
@@ -56,6 +61,7 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 		scrollPane.setViewportView(serverField);
 		
 		commandBar = new JTextField();
+		commandBar.addKeyListener(this);
 		commandBar.setBounds(133, 391, 541, 20);
 		contentPane.add(commandBar);
 		commandBar.setColumns(10);
@@ -63,7 +69,7 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 		
 		list.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		list.addListSelectionListener(this);
-		String[] items = new String[]{"Commands:", ""};
+		String[] items = new String[]{"Commands:", "", "info"};
 		list.setListData(items);
 		list.setBorder(BorderFactory.createLoweredBevelBorder());
 		list.setBounds(10, 144, 113, 236);
@@ -102,7 +108,7 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 				ramUsage.setForeground(Color.RED);
 				urgent = false;
 			}
-			ramUsage.setText("Memory Availible:\r\n" + m + "\r\n\r\nMemory Used:\r\n" + u + "\r\n\r\nMemory Free:\r\n" + f);
+			ramUsage.setText("Memory Availible:\r\n" + m + " MB\r\n\r\nMemory Used:\r\n" + u + " MB\r\n\r\nMemory Free:\r\n" + f + " MB");
 		}
 		@Override
 		public void valueChanged(ListSelectionEvent e) 
@@ -111,5 +117,19 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 			{
 				commandBar.setText(String.valueOf(list.getSelectedValue()));
 			}
+		}
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+			if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
+			{
+				if(main.command(commandBar.getText(), null))
+				commandBar.setText("");
+			}
+		}
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+		}
+		@Override
+		public void keyTyped(KeyEvent arg0) {			
 		}
 }

@@ -1,10 +1,10 @@
 package com.androdome.hotcoffee.server;
 
 public class ServerThread{
-public Main srvmain;
+public HotCoffeeServer srvmain;
 public boolean running = true;
 	
-	ServerThread(Main smain)
+	ServerThread(HotCoffeeServer smain)
 	{
 		srvmain = smain;
 	}

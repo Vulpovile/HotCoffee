@@ -6,10 +6,10 @@ import java.io.IOException;
 
 public class PacketParser {
 
-	public String[] recieve(PacketType pack, DataInputStream data) {
+	public String[] recieve(PacketType pack, DataInputStream data, int type) {
 		try {
 			String[] packets = new String[pack.length];
-			if(data.readByte() == pack.type)
+			if(type == pack.type)
 			{
 			for(int i = 0; i < pack.length; i++)
 			{
@@ -17,15 +17,15 @@ public class PacketParser {
 				{
 					packets[i] = String.valueOf(data.readUnsignedByte());
 				}
-				if(pack.size[i] == -1)
+				else if(pack.size[i] == -1)
 				{
 					packets[i] = String.valueOf(data.readByte());
 				}
-				if(pack.size[i] == 2)
+				else if(pack.size[i] == 2)
 				{
 					packets[i] = String.valueOf(data.readShort());
 				}
-				if(pack.size[i] == 64)
+				else if(pack.size[i] == 64)
 				{
 					byte[] string = new byte[64];
 			   		   for(int b = 0; b < string.length; b++)

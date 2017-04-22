@@ -56,9 +56,12 @@ public class PlayerHandler
 		{
 			String error = "";
 			
-			if (packetversion != 7)				error = "Wrong packet version";
-			else if (failed)					error = "You could not be verified by classicube.net!";
-			else if (Main.users >= Main.max)	error = "This server is full";
+			if (packetversion != 7)
+				error = "Wrong packet version";
+			else if (failed)
+				error = "You could not be verified by classicube.net!";
+			else if (Main.users >= Main.max)
+				error = "This server is full";
 			
 			pPacket.send(PacketType.DISCONNECT, new Object[] { error }, send);
 			main.gui.write(name + " disconnected: " + error);

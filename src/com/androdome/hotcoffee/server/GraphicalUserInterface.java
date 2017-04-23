@@ -30,7 +30,7 @@ import javax.swing.ListSelectionModel;
 public class GraphicalUserInterface extends JFrame implements ListSelectionListener, KeyListener {
 
 	private static final long serialVersionUID = 0;
-	private JPanel contentPane;
+	public JPanel contentPane = new JPanel();
 	public JTextField commandBar;
 	public JTextArea ramUsage = new JTextArea();
 	public JTextArea serverField = new JTextArea();
@@ -39,7 +39,10 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 	HotCoffeeServer main;
 	
 	public GraphicalUserInterface(HotCoffeeServer mainSr) {
+		try{
 		setIconImage(Toolkit.getDefaultToolkit().getImage("HotCoffee64x64.png"));	
+		}
+		catch(Exception ex){}
 		main = mainSr;
 		setResizable(false);
 	    try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());} 
@@ -52,9 +55,9 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 		setTitle("HotCoffee Version PRE 0.0");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 450);
-		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
+		
 		contentPane.setLayout(null);
 		
 		JSeparator separator_1 = new JSeparator();
@@ -143,14 +146,18 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 		public void keyPressed(KeyEvent arg0) {
 			if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
 			{
-				String command = commandBar.getText();
-				if(command.startsWith("$"))
-				{
-					if(main.serverModifier(command.replace("$", "")))
-						commandBar.setText("");
+				if(main.running){
+					String command = commandBar.getText();
+					if(command.startsWith("$"))
+					{
+						if(main.serverModifier(command.replace("$", "")))
+							commandBar.setText("");
+					}
+					else if(main.command(commandBar.getText(), null))
+					commandBar.setText("");
 				}
-				else if(main.command(commandBar.getText(), null))
-				commandBar.setText("");
+				else
+					this.write("Server has stopped, no more input is possible");
 			}
 		}
 		@Override

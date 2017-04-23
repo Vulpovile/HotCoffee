@@ -14,8 +14,8 @@ import java.util.UUID;
 import com.androdome.hotcoffee.net.BindTo;
 import com.androdome.hotcoffee.net.PlayerHandler;
 
-public class HotCoffeeServer {
-	static DateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss] ");
+public class HotCoffeeServer{
+	public static DateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss] ");
 	private Properties properties = new Properties();
 	public static String salt = "" + (new Random()).nextLong();
 	public static boolean verify = true;
@@ -25,18 +25,21 @@ public class HotCoffeeServer {
 	public static String name;
 	public static String motd;
 	public static String consoleName;
+	public static boolean applet = false;
 	public static boolean public_;
 	public int ticks = 0;
 	public static String url;
 	public boolean running = true;
-	public GraphicalUserInterface gui = new GraphicalUserInterface(this);
+	public GraphicalUserInterface gui;
 	BindTo bindTo;
 	public static PlayerHandler[] playerHandler = new PlayerHandler[max];
-
+	
+	
 	public static void main(String args[]) {
 		UUID uuid = UUID.randomUUID();
 		salt = HeartSaltSend.generate(uuid.toString());
 		HotCoffeeServer m = new HotCoffeeServer();
+		m.gui = new GraphicalUserInterface(m);
 		m.gui.setLocationRelativeTo(null);
 		m.gui.setVisible(true);
 		try{
@@ -60,6 +63,18 @@ public class HotCoffeeServer {
 				}
 		}
 		HotCoffeeServer.users = connected;
+	}
+	
+	public void halt()
+	{
+		this.running = false;
+		try {
+			Thread.sleep(100L);
+		} catch (InterruptedException e) {
+		}
+		this.gui.write("Server stopped.");
+		if(!this.applet)
+			System.exit(0);
 	}
 	
 	public void startup() {
@@ -138,6 +153,13 @@ public class HotCoffeeServer {
 		{
 			if(player == null)
 			gui.write("HotCoffee is a Minecraft Classic server based on Java");
+			return true;
+		}
+		else if(spcmd[0].equalsIgnoreCase("stop"))
+		{
+			gui.write("###SERVER STOPPING!###");
+			this.halt();
+			return true;
 		}
 		else
 		{
@@ -145,7 +167,6 @@ public class HotCoffeeServer {
 				gui.write(spcmd[0] + " is not a valid command");
 			return false;
 		}
-		return true;
 	}
 	
 	public boolean serverModifier(String modifier)

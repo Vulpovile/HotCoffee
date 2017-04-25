@@ -100,6 +100,7 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 		ramUsage.setForeground(Color.BLACK);
 		ramUsage.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		ramUsage.setText("Memory Availible:\r\n\r\n\r\nMemory Allocated:\r\n\r\n\r\nMemory Free:");
+		
 		ramUsage.setEditable(false);
 		
 
@@ -134,7 +135,6 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 			}
 			ramUsage.setText("Memory Availible:\r\n" + m + " MB\r\n\r\nMemory Used:\r\n" + u + " MB\r\n\r\nMemory Free:\r\n" + f + " MB");
 		}
-		@Override
 		public void valueChanged(ListSelectionEvent e) 
 		{
 			if(list.getSelectedIndex() > -1)
@@ -142,7 +142,6 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 				commandBar.setText(String.valueOf(list.getSelectedValue()));
 			}
 		}
-		@Override
 		public void keyPressed(KeyEvent arg0) {
 			if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
 			{
@@ -160,10 +159,8 @@ public class GraphicalUserInterface extends JFrame implements ListSelectionListe
 					this.write("Server has stopped, no more input is possible");
 			}
 		}
-		@Override
 		public void keyReleased(KeyEvent arg0) {
 		}
-		@Override
 		public void keyTyped(KeyEvent arg0) {			
 		}
 }

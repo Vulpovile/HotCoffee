@@ -119,6 +119,10 @@ public class PlayerHandler
 		HotCoffeeServer.playerHandler[playerid] = null;
 	}
 	
+	public boolean sendPacket(PacketType type, Object[] obj)
+	{
+		return parsePacket.send(type, obj, out);
+	}
 	
 	public String[] recievePacket() throws IOException
 	{

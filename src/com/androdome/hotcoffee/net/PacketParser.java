@@ -32,7 +32,7 @@ public class PacketParser {
 			   		   {
 			   			   string[b] = (byte) data.readUnsignedByte();
 			   		   }
-			   		packets[i] = new String(string);
+			   		packets[i] = new String(string, "Cp437");
 				}
 				
 			}
@@ -76,7 +76,8 @@ public class PacketParser {
 					{
 						for(int b = 0; b < 64; b++)
 						{
-							byte[] sr = String.valueOf(attributes[i]).getBytes();
+							String cp437 = new String(String.valueOf(attributes[i]));
+							byte[] sr = cp437.getBytes("Cp437");
 							if(b >= sr.length)
 							send.writeByte(0);
 							else

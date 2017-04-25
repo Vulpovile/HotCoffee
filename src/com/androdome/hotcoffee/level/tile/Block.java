@@ -10,14 +10,16 @@ public class Block {
 	}
 	protected boolean explodes;
 	public static final Block[] blocks = new Block[256];
-	public static final boolean[] physics = new boolean[256];
 	public static final boolean[] liquid = new boolean[256];
-	private static int[] tickDelay = new int[256];
 	public int id;
+	public static final Block STONE;
+	public static final Block GRASS;
 	
 	static {
-
+		STONE = new Block(1);
+		GRASS = new Block(2);
 	}
+	
 	public void update()
 	{
 		

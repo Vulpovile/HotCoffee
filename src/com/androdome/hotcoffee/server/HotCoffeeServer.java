@@ -1,8 +1,8 @@
 package com.androdome.hotcoffee.server;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.BindException;
 import java.text.DateFormat;
@@ -11,7 +11,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 
-import com.androdome.hotcoffee.net.BindTo;
+import com.androdome.hotcoffee.net.NetworkConnection;
 import com.androdome.hotcoffee.net.PlayerHandler;
 
 public class HotCoffeeServer{
@@ -31,7 +31,7 @@ public class HotCoffeeServer{
 	public static String url;
 	public boolean running = true;
 	public GraphicalUserInterface gui;
-	BindTo bindTo;
+	NetworkConnection bindTo;
 	public static PlayerHandler[] playerHandler = new PlayerHandler[max];
 	
 	
@@ -73,7 +73,7 @@ public class HotCoffeeServer{
 		} catch (InterruptedException e) {
 		}
 		this.gui.write("Server stopped.");
-		if(!this.applet)
+		if(!HotCoffeeServer.applet)
 			System.exit(0);
 	}
 	
@@ -82,7 +82,7 @@ public class HotCoffeeServer{
 			
 			//Properties
 			try {
-				this.properties.load(new FileReader("server.properties"));
+				this.properties.load(new FileInputStream("server.properties"));
 			} catch (FileNotFoundException e2) {
 				this.gui.write("Properties file not found, creating new file");
 			} catch (IOException e2) {
@@ -107,7 +107,7 @@ public class HotCoffeeServer{
 			
 			
 			try {
-				this.properties.store(new FileWriter("server.properties"), "HotCoffee properties");
+				this.properties.store(new FileOutputStream("server.properties"), "HotCoffee properties");
 			} catch (IOException e1) {
 				gui.write("###Failed to save server properties!###");
 			}
@@ -115,7 +115,7 @@ public class HotCoffeeServer{
 						
 		try 
 		{
-			this.bindTo = new BindTo(HotCoffeeServer.port, this);
+			this.bindTo = new NetworkConnection(HotCoffeeServer.port, this);
 			url = HeartSaltSend.Beat(HotCoffeeServer.salt, HotCoffeeServer.port, HotCoffeeServer.public_, HotCoffeeServer.users, HotCoffeeServer.max, HotCoffeeServer.name);
 			gui.write("Success! Your heartbeat URL is:");
 			gui.write(url);

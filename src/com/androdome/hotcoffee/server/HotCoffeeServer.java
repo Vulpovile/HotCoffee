@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.androdome.hotcoffee.net.NetworkConnection;
+import com.androdome.hotcoffee.net.PacketType;
 import com.androdome.hotcoffee.net.PlayerHandler;
 
 public class HotCoffeeServer{
@@ -49,6 +50,25 @@ public class HotCoffeeServer{
 		{
 			m.gui.write("###FATAL ERROR IN MAIN LOOP! Server shut down!###");
 			m.running = false;
+		}
+	}
+	
+	public void sendChatMessage(String message, String username)
+	{
+		for(int i = 0; i < playerHandler.length; i++)
+		{
+			if(playerHandler[i] != null)
+			{
+				playerHandler[i].sendPacket(PacketType.MESSAGE, new Object[]{0, message});
+			}
+		}
+		if(username == "&;info")
+		{
+			gui.write("info: " + message);
+		}
+		else
+		{
+			gui.write(username + "says: " + "message");
 		}
 	}
 	

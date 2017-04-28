@@ -26,6 +26,32 @@ public class PlayerHandler
 		main = m;
 	}
 
+	
+	public void sendChat(String chat)
+	{
+		String finchat = chat;
+    	if(chat.contains("\\:)\\")){finchat = finchat.replace("\\:)\\", "\1\'");}
+    	if(chat.contains("\\:D\\")){finchat = finchat.replace("\\:D\\", "\2\'");}
+    	if(chat.contains("\\<3\\")){finchat = finchat.replace("\\<3\\", "\3\'");}
+    	if(chat.contains("\\<>\\")){finchat = finchat.replace("\\<>\\", "\4\'");}
+    	if(chat.contains("\\chess\\")){finchat = finchat.replace("\\chess\\", "\5\'");}
+    	if(chat.contains("\\chess2\\")){finchat = finchat.replace("\\chess2\\", "\6\'");}
+    	if(chat.contains("\\.\\")){finchat = finchat.replace("\\.\\", "\7\'");}
+    	if(chat.contains("\\music\\")){finchat = finchat.replace("\\music\\", "\15\'");}
+    	if(chat.contains("\\o\\")){finchat = finchat.replace("\\o\\", "\11\'");}
+    	if(chat.contains("\\[o]\\")){finchat = finchat.replace("\\[o]\\", "\12\'");}
+    	if(chat.contains("\\male\\")){finchat = finchat.replace("\\male\\", "\13\'");}
+    	if(chat.contains("\\female\\")){finchat = finchat.replace("\\female\\", "\14\'");}
+    	if(chat.contains("\\[.]\\")){finchat = finchat.replace("\\[.]\\", "\10\'");}
+    	if(chat.contains("\\music2\\")){finchat = finchat.replace("\\music2\\", "\16\'");}
+    	if(chat.contains("\\*\\")){finchat = finchat.replace("\\*\\", "\17\'");}
+    	if(chat.contains("\\>\\")){finchat = finchat.replace("\\>\\", "\20\'");}
+    	if(chat.contains("\\<\\")){finchat = finchat.replace("\\<\\", "\21\'");}
+    	if(chat.contains("\\arrows\\")){finchat = finchat.replace("\\arrows\\", "\22\'");}
+   	 	if(chat.contains("\\c")){finchat = finchat.replace("\\c", "&");}
+		main.sendChatMessage(finchat, username);
+	}
+	
 	public void Player() throws IOException 
 	{
 		boolean failed = false;
@@ -97,6 +123,7 @@ public class PlayerHandler
 	public void connect() throws IOException
 	{
 		main.gui.write("beginning connection...");
+		main.sendChatMessage("&e"+ username + " has joined the game", "&;info");
 		parsePacket.send(PacketType.INDENTIFICATION, new Object[]{7, "Hi", "Server", 0}, out);
 		parsePacket.send(PacketType.LEVEL_INIT, new Object[]{}, out);
 		//disconnect("Connection not yet created");

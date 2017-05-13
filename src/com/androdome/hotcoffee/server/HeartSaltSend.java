@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
@@ -12,6 +11,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class HeartSaltSend {
 
@@ -67,10 +68,10 @@ public class HeartSaltSend {
 
 	public String doHeartBeat(String hash, String name)
 	{
-		HttpURLConnection heartBeat = null;
+		HttpsURLConnection heartBeat = null;
 
 	      try {
-	         heartBeat = (HttpURLConnection)(new URL("http://www.classicube.net/heartbeat.jsp")).openConnection();
+	         heartBeat = (HttpsURLConnection)(new URL("https://www.classicube.net/heartbeat.jsp")).openConnection();
 	         heartBeat.setRequestMethod("POST");
 	         heartBeat.setDoOutput(true);
 	         heartBeat.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
